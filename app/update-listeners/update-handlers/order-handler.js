@@ -1,37 +1,29 @@
 const config = require('../../config');
-const paymentHandler = require('../../payment-handler');
+const payments = require('../../payments');
 const db = require('../../firebase-db');
 const when = require('when');
-var first = true;
+var initialUpdate = true;
 
 module.exports = function(snapshot){
-  if(first){
+  const order = snapshot.val();
+  if(initialUpdate || !order.payment || !order.customer ){
     // hacky way to ignore the first update
-    first = false;
+    initialUpdate = false;
     return when.resolve();
   }
-  const customers = db.ref(config.dbRef).child('customers');
-  const payments = db.ref(config.dbRef).child('payments');
-  const order = snapshot.val();
+  const customersRef = db.ref(config.dbRef).child('customers');
+  const paymentsRef = db.ref(config.dbRef).child('payments');
 
   return when.all([
-    customers.child(order.customer).once('value'),
-    payments.child(order.payment).once('value')
+    customersRef.child(order.customer).once('value'),
+    paymentsRef.child(order.payment).once('value')
   ]).then(function(results){
     var customer = results[0].val();
     customer.id = results[0].key;
     var payment = results[1].val();
     payment.id = results[1].key;
-    return paymentHandler.createCharge(customer, payment);
-  }).then(function(charge){
-    var paymentUpdate = {};
-    var paymentId = snapshot.val().payment;
-    paymentUpdate[paymentId + '/stripeCharge'] = charge.id;
-    payments.update(paymentUpdate);
-
-    // remove card details from firebase
-    payments.child(paymentId + '/details').remove();
-    console.log('SUCCESS');
-
+    return payments.helpers.createCharge(customer, payment);
+  }).catch(function(err){
+    console.error(err);
   });
 };

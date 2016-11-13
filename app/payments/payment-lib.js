@@ -5,7 +5,7 @@ module.exports = {
   createCustomer: createCustomer,
   createSource: createSource,
   createCharge: createCharge,
-  getCustomer: getCustomer
+  getCustomer: getCustomer,
 };
 
 /**

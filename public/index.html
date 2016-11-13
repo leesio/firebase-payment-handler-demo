@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <script src="https://www.gstatic.com/firebasejs/3.6.0/firebase.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="config.js"></script>
+    <script>firebase.initializeApp(config);</script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app" class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="page-header">
+            <h1>Generic Payment Page</h1>
+          </div>
+          <form>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <label>Name</label>
+                <input
+                  v-model="customer.name"
+                  type="text"
+                  class="form-control"
+                  placeholder="Name"
+                >
+              </div>
+              <div class="col-sm-6">
+                <label>Email</label>
+                <input
+                  v-model="customer.email"
+                  type="email"
+                  class="form-control"
+                  placeholder="Email"
+                >
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <label>Card Number</label>
+                <input
+                  v-model="payment.details.number"
+                  type="text"
+                  class="form-control"
+                  placeholder="Card Number"
+                >
+              </div>
+              <div class="col-sm-3">
+                <label>Expiry</label>
+                <input
+                  v-model="payment.details.expiry"
+                  type="text"
+                  class="form-control"
+                  placeholder="Expiry"
+                >
+              </div>
+              <div class="col-sm-3">
+                <label>CVC</label>
+                <input
+                  v-model="payment.details.cvc"
+                  type="text"
+                  class="form-control"
+                  placeholder="CVC"
+                >
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" v-on:click="submit">Submit Payment</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

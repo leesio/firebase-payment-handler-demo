@@ -1,0 +1,30 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "firebase-admin": "^4.0.1",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6",
+    "stripe": "^4.12.0",
+    "when": "^3.7.7"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.10.0",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.6.0",
+    "nodemon": "^1.11.0"
+  },
+  "scripts": {
+    "dev": "node app/server.js && node_modules/.bin/nodemon app",
+    "serve": "node app",
+    "test": "echo write some tests"
+  }
+}

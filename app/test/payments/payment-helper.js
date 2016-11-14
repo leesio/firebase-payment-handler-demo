@@ -13,12 +13,16 @@ describe('payment-helpers', function(){
     stripeSource = {id: 'stripe-source-id'};
     stripeCharge = {id: 'stripe-charge-id'};
     db = {
-      ref: sinon.stub().returnsThis(),
-      child: sinon.stub().returnsThis(),
-      update: sinon.stub().returnsThis(),
-      push: sinon.stub().returnsThis(),
-      set: sinon.stub().returnsThis(),
-      remove: sinon.stub().returnsThis()
+      helpers: {
+        updateResource: sinon.stub()
+      },
+      lib: {
+        ref: sinon.stub().returnsThis(),
+        child: sinon.stub().returnsThis(),
+        push: sinon.stub().returnsThis(),
+        set: sinon.stub().returnsThis(),
+        remove: sinon.stub().returnsThis()
+      }
     };
     config = {};
     lib = {
@@ -32,15 +36,14 @@ describe('payment-helpers', function(){
   it('should use the dbRef from config', function(){
     config.dbRef = 'test-reference';
     return helpers.createCharge({},{}).then(function(){
-      db.ref.calledWith('test-reference').should.be.eql(true);
+      db.lib.ref.calledWith('test-reference').should.be.eql(true);
     });
   });
   it('should retrieve references to relevant resources', function(){
     config.dbRef = 'test-reference';
     return helpers.createCharge({},{}).then(function(){
-      db.child.should.have.been.calledWith('payments');
-      db.child.should.have.been.calledWith('customers');
-      db.child.should.have.been.calledWith('card-tokens');
+      db.lib.child.should.have.been.calledWith('payments');
+      db.lib.child.should.have.been.calledWith('card-tokens');
     });
   });
   it('should retrieve customer', function(){
@@ -55,9 +58,8 @@ describe('payment-helpers', function(){
     var customer = {id: 'customerId'};
     var payment = {id: 'paymentId'};
     return helpers.createCharge(customer, payment).then(function(){
-      db.update.should.have.been.calledWith({
-        'customerId/stripeId': stripeCustomer.id
-      });
+      db.helpers.updateResource.should.have.been
+        .calledWith('customers', 'customerId/stripeId', stripeCustomer.id);
     });
   });
   it('should create a new source', function(){
@@ -75,9 +77,8 @@ describe('payment-helpers', function(){
     var customer = {id: 'customerId'};
     var payment = {id: 'paymentId'};
     return helpers.createCharge(customer, payment).then(function(){
-      db.update.should.have.been.calledWith({
-        'customerId/cards/stripe-source-id': true
-      });
+      db.helpers.updateResource.should.have.been
+        .calledWith('customers', 'customerId/cards/stripe-source-id', true);
     });
   });
   it('should create a new charge', function(){
@@ -94,18 +95,31 @@ describe('payment-helpers', function(){
     var customer = {id: 'customerId'};
     var payment = {id: 'paymentId'};
     return helpers.createCharge(customer, payment).then(function(){
-      db.update.should.have.been.calledWith({
-        'paymentId/stripeCharge': stripeCharge.id
-      });
+      db.helpers.updateResource.should.have.been
+        .calledWith('payments', 'paymentId/stripeCharge', stripeCharge.id);
     });
   });
   it('should remove card details from payment after', function(){
     var customer = {id: 'customerId'};
     var payment = {id: 'paymentId'};
     var paymentStub = {remove: sinon.stub()};
-    db.child.withArgs('paymentId/details').returns(paymentStub);
+    db.lib.child.withArgs('paymentId/details').returns(paymentStub);
     return helpers.createCharge(customer, payment).then(function(){
       paymentStub.remove.callCount.should.be.eql(1);
+    });
+  });
+  it('should catch errors and create error obj', function(){
+    lib.getCustomer.returns(when.reject(new Error('some error')));
+    var customer = {id: 'customerId'};
+    var payment = {id: 'paymentId'};
+    return helpers.createCharge(customer, payment).then(function(){
+      db.lib.child.should.be.calledWith('errors');
+      db.lib.push.callCount.should.be.eql(1);
+      db.lib.set.callCount.should.be.eql(1);
+      var errorObj = db.lib.set.getCall(0).args[0];
+      errorObj.should.be.an('object').with.keys(['timestamp', 'description', 'error']);
+      errorObj.error.should.be.an('object').with.keys(['message', 'stack']);
+      errorObj.error.message.should.be.eql('some error');
     });
   });
 });

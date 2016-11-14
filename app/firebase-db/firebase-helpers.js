@@ -18,7 +18,7 @@ module.exports = function(db, config){
       let key = errors.push().key;
       errors.child(key).set({
         timestamp: new Date().toISOString(),
-        description: `Unable to update ${path} with ${value}`,
+        description: `Unable to update ${ref}, ${path} with ${value}`,
         error: {
           message: err.message,
           stack: err.stack

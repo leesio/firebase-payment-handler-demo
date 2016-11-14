@@ -13,10 +13,12 @@ describe('order-handler', function(){
       helpers: {createCharge: sinon.stub().returns(when.resolve())}
     };
     db = {
-      ref: sinon.stub().returnsThis(),
-      child: sinon.stub().returnsThis(),
-      create: sinon.stub().returnsThis(),
-      once: sinon.stub()
+      lib: {
+        ref: sinon.stub().returnsThis(),
+        child: sinon.stub().returnsThis(),
+        create: sinon.stub().returnsThis(),
+        once: sinon.stub()
+      }
     };
     order = {
       val: sinon.stub().returns({payment: 'P1', customer: 'C1'}),
@@ -30,39 +32,39 @@ describe('order-handler', function(){
       val: sinon.stub().returns({type: 'payment'}),
       key: 'P1'
     };
-    db.once.onCall(0).returns(when.resolve(customer));
-    db.once.onCall(1).returns(when.resolve(payment));
+    db.lib.once.onCall(0).returns(when.resolve(customer));
+    db.lib.once.onCall(1).returns(when.resolve(payment));
     handlerProvider = require('../../../update-listeners/update-handlers/order-handler');
     handler = handlerProvider(config, payments, db);
   });
   it('should not create charge on the first update', function(){
     // firebase lib sends update event on init
     return handler(order).then(function(){
-      db.create.callCount.should.be.eql(0);
+      db.lib.create.callCount.should.be.eql(0);
     });
   });
   it('should use the dbRef from config', function(){
     config.dbRef = 'test-reference';
     return handler(order).then(function(){
-      db.ref.callCount.should.be.eql(2);
-      db.ref.getCall(0).args[0].should.be.eql('test-reference');
+      db.lib.ref.callCount.should.be.eql(2);
+      db.lib.ref.getCall(0).args[0].should.be.eql('test-reference');
     });
   });
   it('should retrieve customers and payments refs', function(){
     return handler(order).then(function(){
-      db.child.should.have.been.calledWith('customers');
-      db.child.should.have.been.calledWith('payments');
+      db.lib.child.should.have.been.calledWith('customers');
+      db.lib.child.should.have.been.calledWith('payments');
     });
   });
   it('should retrieve customer linked to order', function(){
     return handler(order).then(function(){
       var childArgs = [
-        db.child.getCall(2).args,
-        db.child.getCall(3).args,
+        db.lib.child.getCall(2).args,
+        db.lib.child.getCall(3).args,
       ];
       var onceArgs = [
-        db.once.getCall(0).args,
-        db.once.getCall(1).args,
+        db.lib.once.getCall(0).args,
+        db.lib.once.getCall(1).args,
       ];
       childArgs[0][0].should.be.eql('C1');
       childArgs[1][0].should.be.eql('P1');

@@ -15,7 +15,7 @@ object/function. The deps are wrapped in the export closure to make testing less
 painful.
 
 ## Installation
-Run `yarn install` or `npm install` depending on package maneger preference.
+Run `yarn install` or `npm install` depending on package manager preference.
 
 ### Environment Variables
 There are two environment variable files which should be populated, `app/.env`

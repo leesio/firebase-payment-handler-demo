@@ -29,8 +29,8 @@ function getHelpers(config, lib, db){
     }).then(function(charge){
       db.helpers.updateResource('payments', `${payment.id}/stripeCharge`, charge.id);
 
-      // remove card details from firebase, should maybe wait for charge id to be
-      // added
+      // remove card details from firebase, could maybe wait for charge id to be
+      // added but shouldn't really keep hold of the card details I guess
       payments.child(payment.id + '/details').remove();
       return charge;
     }).catch(function(err){

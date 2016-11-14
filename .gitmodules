@@ -1,0 +1,3 @@
+[submodule "payment-ui"]
+	path = payment-ui
+	url = https://github.com/leesio/firebase-payment-handler-demo-ui

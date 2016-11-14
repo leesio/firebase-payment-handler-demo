@@ -1,11 +1,11 @@
 const db = require('../firebase-db');
+const config = require('../config');
 const updateHandlers = require('./update-handlers');
 
 module.exports = {
-  initialiseListeners: function(opts){
-    opts = opts || {};
+  initialiseListeners: function(){
 
-    const ref = db.ref('app/echo');
+    const ref = db.lib.ref(config.dbRef);
     const orders = ref.child('orders').limitToLast(1);
 
     // TODO customers should be users?

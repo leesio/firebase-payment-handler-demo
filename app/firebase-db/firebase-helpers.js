@@ -4,10 +4,9 @@ module.exports = function(db, config){
   };
   /**
    * Creates customer/source/payment objects
-   * @param {object} customer - customer object
-   * @param {object} payment - details relating to a payment
-   * @param {number} payment.amount - amount of payment (decimal)
-   * @param {string} payment.currency - three char currency code
+   * @param {string} ref - "resource" to update
+   * @param {string} path - path to update
+   * @param {*} value - value to set
    * @returns {promise} resolves to charge created by stripe lib
    */
   function updateResource(ref, path, value){

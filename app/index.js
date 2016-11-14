@@ -1,5 +1,6 @@
-const config = require('./config');
+require('./config');
 const updateListeners = require('./update-listeners');
-require('./server');
 
-updateListeners.initialiseListeners();
+module.exports = function(){
+  updateListeners.initialiseListeners();
+}();

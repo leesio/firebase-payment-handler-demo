@@ -4,10 +4,10 @@ A small 'app' demonstrating a very simple payment flow powered by [firebase][1]
 and [stripe][1]
 
 ## Structure
-The idea was to separate the logic for individual update listener into their own
+The idea was to separate logic for individual update listeners into their own
 files and initialise them on load allowing easy/tidy future expansion.
 
-Libraries are wrapped in an attempt to reducde the pain of changing libraries in
+Libraries are wrapped in an attempt to reduce the pain of changing libraries in
 the future and helper functions are provided where useful.
 
 All modules export a function receiving deps as args, and return an

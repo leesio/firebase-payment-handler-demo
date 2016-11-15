@@ -21,7 +21,8 @@ describe('payment-helpers', function(){
         child: sinon.stub().returnsThis(),
         push: sinon.stub().returnsThis(),
         set: sinon.stub().returnsThis(),
-        remove: sinon.stub().returnsThis()
+        remove: sinon.stub().returnsThis(),
+        key: 'some-card-id'
       }
     };
     config = {};
@@ -78,7 +79,7 @@ describe('payment-helpers', function(){
     var payment = {id: 'paymentId'};
     return helpers.createCharge(customer, payment).then(function(){
       db.helpers.updateResource.should.have.been
-        .calledWith('customers', 'customerId/cards/stripe-source-id', true);
+        .calledWith('customers', 'customerId/cards/some-card-id', true);
     });
   });
   it('should create a new charge', function(){
@@ -105,7 +106,9 @@ describe('payment-helpers', function(){
     var paymentStub = {remove: sinon.stub()};
     db.lib.child.withArgs('paymentId/details').returns(paymentStub);
     return helpers.createCharge(customer, payment).then(function(){
-      paymentStub.remove.callCount.should.be.eql(1);
+      when.resolve().then(function(){
+        paymentStub.remove.callCount.should.be.eql(1);
+      });
     });
   });
   it('should catch errors and create error obj', function(){

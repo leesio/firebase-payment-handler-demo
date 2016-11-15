@@ -23,7 +23,7 @@ function getHelpers(config, lib, db){
         token: source.id,
         customer: customer.id
       });
-      var updatePath = `${customer.id}/cards/${source.id}`;
+      var updatePath = `${customer.id}/cards/${cardId}`;
       db.helpers.updateResource('customers', updatePath, true);
       return lib.createCharge(source, payment);
     }).then(function(charge){

@@ -7,7 +7,7 @@ module.exports = function(db, config){
    * @param {string} ref - "resource" to update
    * @param {string} path - path to update
    * @param {*} value - value to set
-   * @returns {promise} resolves to charge created by stripe lib
+   * @returns {promise} resolves to update obj
    */
   function updateResource(ref, path, value){
     const dbRef = db.ref(config.dbRef).child(ref);
